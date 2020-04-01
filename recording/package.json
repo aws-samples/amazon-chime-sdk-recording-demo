@@ -1,0 +1,15 @@
+{
+  "name": "recording",
+  "version": "1.0.0",
+  "description": "",
+  "main": "record.js",
+  "scripts": {
+    "start": "node record.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.632.0"
+  }
+}
