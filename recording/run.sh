@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 set -xeo pipefail
 
 BROWSER_URL="${MEETING_URL}&record=true"
@@ -62,5 +66,4 @@ sleep 0.5  # Ensure this has started before moving on
 xdotool mousemove 1 1 click 1  # Move mouse out of the way so it doesn't trigger the "pause" overlay on the video tile
 
 exec node /recording/record.js ${S3_BUCKET_NAME} ${SCREEN_WIDTH} ${SCREEN_HEIGHT}
-# exec node /home/ubuntu/ChimeSDK/UCBuzzClientSDKRecording/recording/record.js ${S3_BUCKET_NAME} ${SCREEN_WIDTH} ${SCREEN_HEIGHT}
 

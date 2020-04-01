@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 const { spawnSync } = require('child_process');
 const fs = require("fs");
 
@@ -6,8 +9,6 @@ let region = 'us-east-1';
 let imageId = ``;
 let bucket = ``;
 let stack = ``;
-// let app = `meeting`;
-// let useEventBridge = false;
 let ecrDockerImageArn = ``;
 
 function usage() {
@@ -96,7 +97,7 @@ function spawnOrFail(command, args, options) {
     console.log(`Command ${command} failed with ${cmd.error.code}`);
     process.exit(255);
   }
-  const output=cmd.output.toString();
+  const output=cmd.stdout.toString();
   console.log(output);
   if (cmd.status !== 0) {
     console.log(`Command ${command} failed with exit code ${cmd.status} signal ${cmd.signal}`);

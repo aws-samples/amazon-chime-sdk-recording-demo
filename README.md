@@ -1,42 +1,39 @@
 ## Amazon Chime SDK recording demo
 
-This repository contains resources to build a docker image and serverless CloudFormation templates. A container will be craeted using image and uploaded to ECR, which is referenced by ECS task. CloudFormation template orchestrates resources(APIGateway, Lambda, ECS, etc) to run the recording application. When deployed, startRecording API will enable a bot to join a Chime meeting via an URL and record the meeting's audio, video and screenshare in high definition (1080p at 30fps by default, but configurable) and stream to the S3 bucket you specify. stopRecording API will stop the ECS task and complete the upload.
-
-Be sure to:
-
-* Change the title in this README
-* Edit your repository description on GitHub
+This repository contains resources for building a demo application that records media from Amazon Chime SDK meeting sessions. Included is a Docker image and serverless AWS CloudFormation templates that you can deploy to your AWS Account. The Walkthrough will show you how to create a container using the Docker image and upload it to Amazon Elastic Container Registry (ECR), which is referenced by a Amazon Elastic Container Service (ECS) task. AWS CloudFormation templates orchestrate resources (including Amazon APIGateway, Amazon Lambda, and Amazon ECS) that run the recording demo application. When deployed, the startRecording API will enable "a bot" (i.e. a headless meeting attendee) to join an Amazon Chime SDK meeting session via a URL and record the meeting's audio, video and screen share in high definition (1080p at 30fps by default, but configurable) and stream output to a specified Amazon S3 bucket. The stopRecording API will stop the ECS task and complete the upload.
 
 ## Prerequisites
 
-For this walkthrough, you should have the following prerequisites: 
+For this walkthrough, you should have the following prerequisites:
 
 * [An AWS account](https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Fportal.aws.amazon.com%2Fbilling%2Fsignup%2Fresume&client_id=signup)
-* [Postman app](https://www.postman.com/)
 
 ## Walkthrough
 
 The sections as enumerated below will walk you through the process of creating and recording a Chime SDK meeting:
 
-* Setup Cloud9 environment and clone the demo application
-* Create an Elastic Container Repository(ECR) and register a Docker container image
-* Deploy the Chime SDK Recording template
-* Start a Chime SDK meeting with our serverless demo and join with multiple participants
-* Start the meeting recording 
+* Setup AWS Cloud9 environment and clone the demo application
+* Create an Amazon Elastic Container Registry (ECR) and register a Docker container image
+* Deploy the Amazon Chime SDK Recording template
+* Start a Amazon Chime SDK meeting with the serverless demo application and join with multiple participants
+* Start the meeting recording
 * Stop the recording and view the recording artifact
 
 ### Create an AWS Cloud9 environment
-1. Log in with your AWS credentials and go to the [AWS Cloud9 Console](https://us-east-1.console.aws.amazon.com/cloud9/home?region=us-east-1).
-2. If you have previously set up a Cloud9 environment in your account you can use it and skip this step entirely.
-3. Press the Create environment button or go [here](https://us-east-1.console.aws.amazon.com/cloud9/home/create).
-4. For the Name enter <unique environment name> and press the Next step button.
-5. For Environment Settings use the defaults and press the Next step button.
-6. Review the Environment name and settings and press the Create environment button.
-    You can optionally use your own Ec2 instance if you have configured.
+1. Log into the AWS console with your AWS credentials and go to the [AWS Cloud9 Console](https://us-east-1.console.aws.amazon.com/cloud9/home?region=us-east-1).
+2. If you have previously set up a AWS Cloud9 environment in your account you can use it and skip this step entirely.
+3. Press the **Create environment** button or go [here](https://us-east-1.console.aws.amazon.com/cloud9/home/create).
+4. For the Name enter <unique environment name> and press the **Next step** button.
+5. For **Environment Settings** 
+    * For **Instance Type**, select `Other instance type` and select `t3.medium` from the dropdown.
+    * For **Platform**, select `Ubuntu Server 18.04 LTS`
+    * Press the **Next step** button.
+6. Review the **Environment name and settings** and press the **Create environment** button.
+    You can optionally use your own Amazon EC2 instance if you have configured.
 7. Wait for the environment to start.
 
-### Create a ECR repository, build and push the docker image to ECR
-1. In the Cloud9 instance, run the below command to create a repository in ECR
+### Create a Amazon ECR repository, build and push the docker image to Amazon ECR
+1. In the AWS Cloud9 instance, run the below command to create a repository in Amazon ECR
     ```
     aws ecr create-repository --repository-name <repository-name>
     ```
@@ -57,39 +54,36 @@ The sections as enumerated below will walk you through the process of creating a
     }
     ```
 
-    **Note** the `"repositoryUri": "123456789012.dkr.ecr.us-east-1.amazonaws.com/chime-sdk-recording-demo"` in the response. We would need that for pushing the docker image to ECR.
-
-2. In the Cloud9 instance, execute the following commands to download our recording application
+2. In the AWS Cloud9 instance, execute the following commands to download the recording demo.
     ```
-    git clone https://github.com/aws-samples/amazon-chime-sdk-meeting-recording-demo.git
-    cd amazon-chime-sdk-meeting-recording-demo
+    git clone https://github.com/aws-samples/amazon-chime-sdk-recording-demo.git
+    cd amazon-chime-sdk-recording-demo
     ```
-    Note: Update git URL. Currently considering folder name as “amazon-chime-sdk-meeting-recording-demo”
 
-3. Execute the following command with the repositoryUri from step 1 to build and push the docker image to ECR.
+3. Execute the following command with the value of `repositoryUri` from step 1 to build and push the docker image to Amazon ECR
     ```
     make ECR_REPO_URI=<repositoryUri>
     ```
-    Once the above commands execute successfully you will see an entry for the image in ECR as follows:
-    
+    Once the above commands execute successfully you will see an entry for the image in Amazon ECR as follows:
+
     ![ECR Repo](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/ecr-repository-with-docker-image.png)
 
-### Run deployment script 
-     
-Executing the following command will create a CloudFormation stack containing an ECS cluster, ECS task definition, S3 bucket, Lambda and an API Gateway deployment along with some IAM roles and networking artifacts required for the ECS Cluster like VPC, subnets, security groups, autoscaling group etc.
-```
-node ./deploy.js -b <my-bucket> -s <my-stack> -i <my-docker-image> -r <region>
-```
-The above step takes up to 15 minutes to complete and automatically deploys a Cloud Formation stack which creates resources that will be needed to run the recording demo. You will get an API Gateway invoke URL in the output.
+### Deploy an Amazon Chime SDK Recording AWS CloudFormation Template
+
+1. Execute the following command to create a AWS CloudFormation stack containing an Amazon ECS cluster, Amazon ECS task definition, Amazon S3 bucket, Amazon Lambda and an Amazon API Gateway deployment along with IAM roles and networking resources required for the Amazon ECS Cluster including an Amazon VPC, subnets, security groups, and an auto-scaling group.
+    ```
+    node ./deploy.js -b <my-bucket> -s <my-stack> -i <my-docker-image> -r <region>
+    ```
+The above step deploys a AWS CloudFormation stack that creates resources needed to run the recording service. It may take several minutes to complete. You will get an Amazon API Gateway invoke URL in the output.
 
 ![Deploy output](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/deploy-script-output.png)
 
-### Start a Chime SDK meeting with our serverless demo and join with multiple participants
-    
-1. At this point the recording service can record any webpage. Alternatively, you can use our Chime SDK demo application by executing the following
+### Start an Amazon Chime SDK meeting with our serverless demo and join with multiple participants
+
+1. At this point you can use our Amazon Chime SDK demo application by executing the following
     ```
     cd ../
-    git clone https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless
+    git clone https://github.com/aws/amazon-chime-sdk-js
     cd demos/serverless
     ```
 
@@ -97,50 +91,42 @@ The above step takes up to 15 minutes to complete and automatically deploys a Cl
     ```
     node ./deploy.js -r us-east-1 -b <my-bucket> -s <my-stack-name> -a meeting
     ```
-3. The script will create an S3 bucket and CloudFormation stack with Lambda and API Gateway resources required to run the serverless meeting demo. After the script finishes, it will output a URL that can be opened in a browser.
-4. Open the demo using the link (with 'prod/v2' in the end) which was obtained in the previous step in multiple tabs [in any web browser supported by the Chime SDK](https://docs.aws.amazon.com/chime/latest/dg/meetings-sdk.html#mtg-browsers) to simulate several participant joins.
+   The script will create an Amazon S3 bucket and AWS CloudFormation stack with Amazon Lambda and Amazon API Gateway resources required to run this demo. After the script finishes, it will output a URL that can be opened in a browser.
 
-Optionally enable video or content sharing modalities for each participant in addition to audio
+3. Open the Amazon Chime SDK serverless demo application using the link which was obtained in the previous step in multiple tabs [in any web browser supported by the Amazon Chime SDK](https://docs.aws.amazon.com/chime/latest/dg/meetings-sdk.html#mtg-browsers) to simulate several participant joins. Optionally enable video or content sharing modalities for each participant in addition to audio.
+
 
 ### Start the meeting recording
-    
-There are multiple ways for [Invoking a REST API in Amazon API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-call-api.html). Here is an example on how to [invoke the API using postman app](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-use-postman-to-call-api.html).
-    
-You need to select “AWS Signature” and add your `AccessKey`, `SecretKey` & `AWS Region` in the Authorization tab.
 
-![postman auth](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-auth-tab.png)
+There are multiple ways for [invoking a REST API in Amazon API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-call-api.html). In this example we will [use the Postman app](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-use-postman-to-call-api.html).
 
-**Start recording:** To start the recording, we need to pass 2 query parameters in the POST request to API Gateway. 
+1. Follow the steps highlighted in this document to install the [Postman app](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-use-postman-to-call-api.html).
 
-    1. recordingAction=start
-    2. meetingURL=<URL encoded meeting url>
-    
-Sample request: 
+    You need to select “AWS Signature” and add your `AccessKey`, `SecretKey` & `AWS Region` in the Authorization tab.
 
-`https://o3l808s793.execute-api.us-east-1.amazonaws.com/Prod/recording?recordingAction=start&meetingURL=https%3A%2F%2Fn40tfakmnd.execute-api.us-east-1.amazonaws.com%2FProd%2Fv2%3Fm%3DAnuranTesting001919`
+    ![postman auth](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-auth-tab.png)
 
-This is how it looks
+2. Start recording by passing the `recordingAction` as "start" and a **url encoded** `meetingURL` for our demo application as query parameters in the POST request to API Gateway.
 
-![start recording](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-start-recording.png)
+    ![start recording](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-start-recording.png)
+
+    At this point the entire web page is captured by FFmpeg at 1920 X 1080 fidelity and automatically transcoded and uploaded to Amazon S3. The file created in Amazon S3 will remain hidden until the capture is complete. Our demo application has been modified to suppress prompts for input device permissions and display customized UI for the recording bot.
+
+    ![recording bot](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/recording-bot-joining-meeting.png)
 
 ### Stop the recording and view the recording artifact
 
-1. To stop the recording, we need to pass 2 query parameters in the POST request to API Gateway. 
-    1. recordingAction=stop
-    2. taskId=taskArn
+1. To stop the recording, we need to pass the task ARN as `taskId` that was received in the API response to start the recording in addition to the `recordingAction` denoting "stop".
 
     ![stop recording](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-stop-recording.png)
 
-2. Once the recording stops, 
-    1. Open the AWS Console and navigate to Amazon S3
-    2. Navigate to the folder “chime-meeting-sdk-<aws-account-id>-<region>-recording-artifacts”
-    3. You will find a meeting there with the file name of the meeting id along with the time when the recording was initiated. 
+2. Once the recording stops, open the AWS Console and navigate to Amazon S3. You will find a recording in the bucket `chime-meeting-sdk-<aws-account-id>-<region>-recording-artifacts`, with a key name YYYY/MM/DD/HH/<ISO8601time when meeting started>.mp4.
 
-![recording artifacts](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/recording-artifacts.png)
+    ![recording artifacts](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/recording-artifacts.png)
 
 
 ### Cleaning up
-To avoid incurring future charges, please delete any resources in your account that you are not using such as files in S3, ECS and Lambda instances, Cloud9 environment and API-Gateway entries.
+To avoid incurring future charges, please delete any resources in your account that you are not using such as files in Amazon S3, Amazon ECS and Amazon Lambda instances, AWS Cloud9 environment and Amazon API Gateway entries.
 
 ## License
 
@@ -148,3 +134,4 @@ This project is licensed under the Apache-2.0 License.
 
 **Disclaimer:** You and your end users understand that recording Amazon Chime SDK meetings with this feature may be subject to laws or regulations regarding the recording of electronic communications, and that it is your and your end users’ responsibility to comply with all applicable laws regarding the recording, including properly notifying all participants in a recorded session or to a recorded communication that the session or communication is being recorded and obtain their consent.
 
+**Disclaimer:** Deploying the Amazon Chime SDK demo applications contained in this repository will cause your AWS Account to be billed for services, including the Amazon Chime SDK, used by the application.

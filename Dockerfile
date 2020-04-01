@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND noninteractive
