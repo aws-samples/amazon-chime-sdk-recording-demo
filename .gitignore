@@ -1,0 +1,5 @@
+.DS_Store
+.idea
+recording.log
+container.env
+/recording/node_modules/
