@@ -117,7 +117,7 @@ There are multiple ways for [invoking a REST API in Amazon API Gateway](https://
 
     ![start recording](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-start-recording.png)
 
-    At this point the entire web page is captured by FFmpeg at 1920 X 1080 fidelity and automatically transcoded and uploaded to Amazon S3. The file created in Amazon S3 will remain hidden until the capture is complete. Our demo application has been modified to suppress prompts for input device permissions and display customized UI for the recording bot.
+    At this point the entire web page is captured by FFmpeg at 1280 X 720 fidelity and automatically transcoded and uploaded to Amazon S3. The file created in Amazon S3 will remain hidden until the capture is complete. Our demo application has been modified to suppress prompts for input device permissions and display customized UI for the recording bot.
 
     ![recording bot](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/recording-bot-joining-meeting.png)
 
