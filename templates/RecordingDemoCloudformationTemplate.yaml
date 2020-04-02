@@ -6,22 +6,22 @@ Transform: 'AWS::Serverless-2016-10-31'
 Parameters:
   ECSTaskCpu:
     Type: Number
-    Default: 1024
+    Default: 4096
   ECSTaskMemory:
     Type: Number
-    Default: 4096
+    Default: 8192
   ECSContainerName:
     Type: String
     Default: 'recording-demo-container'
   ECSContainerCpu:
     Type: Number
-    Default: 512
+    Default: 4096
   ECSContainerMemory:
     Type: Number
-    Default: 2048
+    Default: 8192
   ECSContainerMemoryReservation:
     Type: Number
-    Default: 512
+    Default: 8192
   EcsClusterName:
     Type: String
     Description: 'Specifies the ECS Cluster Name with which the resources would be associated'
