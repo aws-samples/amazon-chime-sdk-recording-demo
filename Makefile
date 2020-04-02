@@ -15,7 +15,7 @@ all: build_upload
 
 build_upload:
 	
-	REGEX='^[0-9]{12}\.dkr\.ecr\..+\.amazonaws\.com\/[a-z0-9_/-]+$$'; \
+	@REGEX='^[0-9]{12}\.dkr\.ecr\..+\.amazonaws\.com\/[a-z0-9_/-]+$$'; \
 	if [[ $(ECR_REPO_URI) =~ $$REGEX ]]; then \
 		echo "Valid ECR URI format"; else \
 		echo "InvalidECR URI format"; \
@@ -26,6 +26,7 @@ build_upload:
 	docker build -t $(REPO_NAME) .
 	docker tag $(REPO_NAME):latest $(ECR_REPO_URI):latest
 	docker push $(ECR_REPO_URI):latest
+	@echo Image URI in ECR repository: $(ECR_REPO_URI):latest
 
 
 image:
