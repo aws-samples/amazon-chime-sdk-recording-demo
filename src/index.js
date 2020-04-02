@@ -4,7 +4,6 @@
 'use strict';
 
 var AWS = require('aws-sdk');
-AWS.config.update({region: 'us-east-1'});
 var ecs = new AWS.ECS();
 
 // Reading environment variables
