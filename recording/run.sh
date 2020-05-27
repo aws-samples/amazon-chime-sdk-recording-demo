@@ -44,6 +44,7 @@ user_pref("media.navigator.permission.disabled", true);
 user_pref("media.gmp-gmpopenh264.abi", "x86_64-gcc3");
 user_pref("media.gmp-gmpopenh264.lastUpdate", 1571534329);
 user_pref("media.gmp-gmpopenh264.version", "1.8.1.1");
+user_pref("doh-rollout.doorhanger-shown", true);
 EOF
 
 # Start Firefox browser and point it at the URL we want to capture
