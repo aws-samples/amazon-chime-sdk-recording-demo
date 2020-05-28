@@ -161,6 +161,8 @@ Resources:
                     Ref: AWS::Region
                   awslogs-stream-prefix:
                     Ref: ECSContainerName
+              LinuxParameters:
+                SharedMemorySize: 2048
 
   ECSCluster:
     Type: 'AWS::ECS::Cluster'
