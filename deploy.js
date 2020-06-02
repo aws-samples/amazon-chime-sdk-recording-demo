@@ -1,5 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
+'use strict';
 
 const { spawnSync } = require('child_process');
 const fs = require("fs");
@@ -98,7 +99,7 @@ function spawnOrFail(command, args, options) {
     process.exit(255);
   }
   const output=cmd.stdout.toString();
-  console.log(output);
+  
   if (cmd.status !== 0) {
     console.log(`Command ${command} failed with exit code ${cmd.status} signal ${cmd.signal}`);
     console.log(cmd.stderr.toString());
@@ -129,10 +130,59 @@ spawnOrFail('sam', ['package', '--s3-bucket', `${bucket}`,
                     '--region',  `${region}`]);
 
 console.log('Deploying recording application');
-spawnOrFail('sam', ['deploy', '--template-file', './build/packaged.yaml', '--stack-name', `${stack}`,
+const output=spawnOrFail('sam', ['deploy', '--template-file', './build/packaged.yaml', '--stack-name', `${stack}`,
                     '--parameter-overrides', `ECRDockerImageArn=${ecrDockerImageArn}`,
                     '--capabilities', 'CAPABILITY_IAM', '--region', `${region}`]);
+console.log(output);
 
-console.log("Recording API Gateway invoke URL: ");
-const output=spawnOrFail('aws', ['cloudformation', 'describe-stacks', '--stack-name', `${stack}`,
+const invokeUrl=spawnOrFail('aws', ['cloudformation', 'describe-stacks', '--stack-name', `${stack}`,
                     '--query', 'Stacks[0].Outputs[0].OutputValue', '--output', 'text', '--region', `${region}`]);
+console.log(`Recording API Gateway invoke URL: ${invokeUrl}`);
+
+const ecsClusterName=spawnOrFail('aws', ['cloudformation', 'describe-stacks', '--stack-name', `${stack}`,
+                    '--query', 'Stacks[0].Outputs[1].OutputValue', '--output', 'text', '--region', `${region}`]).trim();
+console.log('Adding ECS capacity provider and enabling managed scaling & termination protection');
+
+const autoScalingGroupName=spawnOrFail('aws', ['cloudformation', 'describe-stacks', '--stack-name', `${stack}`,
+                    '--query', 'Stacks[0].Outputs[2].OutputValue', '--output', 'text', '--region', `${region}`]).trim();
+
+
+// Enabling instance termination perotection from scale-in
+spawnSync('aws', ['autoscaling', 'update-auto-scaling-group', 
+                    '--auto-scaling-group-name', `${autoScalingGroupName}`, '--new-instances-protected-from-scale-in']);
+
+const asg = JSON.parse(spawnOrFail('aws', ['autoscaling', 'describe-auto-scaling-groups', '--auto-scaling-group-name', `${autoScalingGroupName}`]));
+const autoScalingGroupInstances = asg.AutoScalingGroups && asg.AutoScalingGroups[0].Instances;
+const autoScalingGroupArn = asg.AutoScalingGroups && asg.AutoScalingGroups[0].AutoScalingGroupARN;
+const autoScalingGroupCapacityProviderName = autoScalingGroupName + 'CapacityProvider';
+var instanceIds = [];
+autoScalingGroupInstances.forEach(instance => {
+  instanceIds.push(instance.InstanceId);
+});
+
+spawnOrFail('aws', ['autoscaling', 'set-instance-protection', 
+                    '--auto-scaling-group-name', `${autoScalingGroupName}`, 
+                    '--protected-from-scale-in', '--instance-ids', `${instanceIds[0]}`, `${instanceIds[1]}`]);
+
+// Create a capacity provider with managed scale-in
+let capacityProviderParam = {
+  autoScalingGroupArn: autoScalingGroupArn,
+  managedScaling: {
+    status: "ENABLED",
+    targetCapacity: 60,
+    minimumScalingStepSize: 1,
+    maximumScalingStepSize: 1
+  },
+  managedTerminationProtection: "ENABLED"
+}
+spawnOrFail('aws', ['ecs', 'create-capacity-provider', 
+                    '--name', `${autoScalingGroupCapacityProviderName}`, '--auto-scaling-group-provider', 
+                    `${JSON.stringify(capacityProviderParam)}`]);
+let defaultCapacityProvider = {
+    capacityProvider: autoScalingGroupCapacityProviderName
+  }
+
+spawnOrFail('aws', ['ecs', 'put-cluster-capacity-providers', 
+                    '--cluster', `${ecsClusterName}`, '--capacity-providers', `${autoScalingGroupCapacityProviderName}`, 
+                    '--default-capacity-provider-strategy', `${JSON.stringify(defaultCapacityProvider)}`]);
+console.log('Deployment complete')
