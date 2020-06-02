@@ -37,7 +37,7 @@ Parameters:
     Default: 5
   DesiredCapacity:
     Type: Number
-    Default: '5'
+    Default: 2
     Description: Number of instances to launch in your ECS cluster.
   ImageId:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
@@ -337,3 +337,9 @@ Outputs:
   ApiURL:
     Description: "API endpoint URL for Prod environment"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/recording"
+  AutoScalingGroupName:
+    Description: "Name of the AWS AutoScalingGroup created as part of this deployment"
+    Value: !Ref ECSAutoScalingGroup
+  ECSClusterName:
+    Description: "Name of the AWS ECS cluster created as part of this deployment"
+    Value: !Ref ECSCluster
