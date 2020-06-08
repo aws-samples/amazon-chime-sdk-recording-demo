@@ -22,7 +22,7 @@ let response = {
     headers: {},
     body: ''
 };
- 
+
 exports.handler = function(event, context, callback) {
     let meetingURL = "";
     let taskId = "";
@@ -87,7 +87,18 @@ exports.handler = function(event, context, callback) {
     callback(null, response);
 };
 
+function getFileKey() {
+    const timestamp = new Date();
+    const fileTimestamp = timestamp.toISOString().substring(0,19);
+    const year = timestamp.getFullYear();
+    const month = timestamp.getMonth() + 1;
+    const day = timestamp.getDate();
+    const hour = timestamp.getUTCHours();
+    return `${year}/${month}/${day}/${hour}/${fileTimestamp}.mp4`;
+}
+
 function startRecording(event, context, callback, meetingUrl) {
+    const fileKey = getFileKey();
     let ecsRunTaskParams = {
         cluster: ecsClusterArn,
         launchType: "EC2",
@@ -103,6 +114,10 @@ function startRecording(event, context, callback, meetingUrl) {
                         {
                             name: "RECORDING_ARTIFACTS_BUCKET",
                             value: recordingArtifactsBucket
+                        },
+                        {
+                            name: "FILE_KEY",
+                            value: fileKey,
                         }
                     ],
                     name: ecsContainerName
@@ -125,7 +140,14 @@ function startRecording(event, context, callback, meetingUrl) {
         else {
             console.log(data);  // successful response
             response.statusCode = 200;
-            response.body = JSON.stringify((data.tasks.length && data.tasks[0].taskArn) ? data.tasks[0].taskArn : data, null, ' ');
+            response.body = JSON.stringify(
+                {
+                    taskId: (data.tasks.length && data.tasks[0].taskArn) ? data.tasks[0].taskArn : data,
+                    fileKey
+                },
+                null,
+                ' '
+            );
             context.succeed(response);
         }
     });

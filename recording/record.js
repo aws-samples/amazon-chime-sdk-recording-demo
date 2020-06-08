@@ -7,6 +7,9 @@ const { S3Uploader } = require('./utils/upload');
 const MEETING_URL = process.env.MEETING_URL || 'Not present in environment';
 console.log(`[recording process] MEETING_URL: ${MEETING_URL}`);
 
+// This is the shared timestamp string shared between lambda function and this instance
+const FILE_KEY = process.env.FILE_KEY;
+
 const args = process.argv.slice(2);
 const BUCKET_NAME = args[0];
 console.log(`[recording process] BUCKET_NAME: ${BUCKET_NAME}`);
@@ -67,14 +70,15 @@ transcodeStreamToOutput.stderr.on('data', data => {
     console.log(`[transcodeStreamToOutput process] stderr: ${(new Date()).toISOString()} ffmpeg: ${data}`);
 });
 
-const timestamp = new Date();
-const fileTimestamp = timestamp.toISOString().substring(0,19);
-const year = timestamp.getFullYear();
-const month = timestamp.getMonth() + 1;
-const day = timestamp.getDate();
-const hour = timestamp.getUTCHours();
-const fileName = `${year}/${month}/${day}/${hour}/${fileTimestamp}.mp4`;
-new S3Uploader(BUCKET_NAME, fileName).uploadStream(transcodeStreamToOutput.stdout);
+// const timestamp = new Date();
+// const fileTimestamp = timestamp.toISOString().substring(0,19);
+// const year = timestamp.getFullYear();
+// const month = timestamp.getMonth() + 1;
+// const day = timestamp.getDate();
+// const hour = timestamp.getUTCHours();
+// const fileName = `${year}/${month}/${day}/${hour}/${fileTimestamp}.mp4`;
+
+new S3Uploader(BUCKET_NAME, FILE_KEY).uploadStream(transcodeStreamToOutput.stdout);
 
 // event handler for docker stop, not exit until upload completes
 process.on('SIGTERM', (code, signal) => {
