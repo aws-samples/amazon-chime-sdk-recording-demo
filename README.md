@@ -100,6 +100,11 @@ The above step deploys a AWS CloudFormation stack that creates resources needed 
     ```
    The script will create an Amazon S3 bucket and AWS CloudFormation stack with Amazon Lambda and Amazon API Gateway resources required to run this demo. After the script finishes, it will output a URL that can be opened in a browser.
 
+    Here is an example Amazon Chime SDK demo application output URL:
+    ```
+    https://abcdefghijk.execute-api.us-east-1.amazonaws.com/Prod/v2/
+    ```
+
 3. Open the Amazon Chime SDK serverless demo application using the link which was obtained in the previous step in multiple tabs [in any web browser supported by the Amazon Chime SDK](https://docs.aws.amazon.com/chime/latest/dg/meetings-sdk.html#mtg-browsers) to simulate several participant joins. Optionally enable video or content sharing modalities for each participant in addition to audio.
 
 
@@ -114,6 +119,15 @@ There are multiple ways for [invoking a REST API in Amazon API Gateway](https://
     ![postman auth](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-auth-tab.png)
 
 2. Start recording by passing the `recordingAction` as "start" and a **url encoded** `meetingURL` for our demo application as query parameters in the POST request to API Gateway.
+
+    Here is an example URL of a specific meeting:
+    ```
+    https://abcdefghijk.execute-api.us-east-1.amazonaws.com/Prod/v2/?m=test-meeting
+    ```
+    After encoding the above example, the URL will look as follows which has to be passed as value for `meetingURL` query parameter:
+    ```
+    https%3A%2F%2Fabcdefghijk.execute-api.us-east-1.amazonaws.com%2FProd%2Fv2%2F%3Fm%3Dtest-meeting
+    ```
 
     ![start recording](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-start-recording.png)
 
