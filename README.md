@@ -99,8 +99,12 @@ The above step deploys a AWS CloudFormation stack that creates resources needed 
     node ./deploy.js -r us-east-1 -b <my-bucket> -s <my-stack-name> -a meeting
     ```
    The script will create an Amazon S3 bucket and AWS CloudFormation stack with Amazon Lambda and Amazon API Gateway resources required to run this demo. After the script finishes, it will output a URL that can be opened in a browser.
+   
+   You will get a URL similar to `https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/v2` in the output of this step. 
 
 3. Open the Amazon Chime SDK serverless demo application using the link which was obtained in the previous step in multiple tabs [in any web browser supported by the Amazon Chime SDK](https://docs.aws.amazon.com/chime/latest/dg/meetings-sdk.html#mtg-browsers) to simulate several participant joins. Optionally enable video or content sharing modalities for each participant in addition to audio.
+
+    **NOTE:** This would be the `meetingURL` that would be used later for passing as a parameter to the `StartRecording` API. It would look something like this `https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/v2?m=<meeting-id>`
 
 
 ### Start the meeting recording
