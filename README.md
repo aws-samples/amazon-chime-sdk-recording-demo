@@ -131,7 +131,7 @@ There are multiple ways for [invoking a REST API in Amazon API Gateway](https://
 
     ![stop recording](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-stop-recording.png)
 
-2. Once the recording stops, open the AWS Console and navigate to Amazon S3. You will find a recording in the bucket `chime-meeting-sdk-<aws-account-id>-<region>-recording-artifacts`, with a key name YYYY/MM/DD/HH/<ISO8601time when meeting started>.mp4.
+2. Once the recording stops, open the AWS Console and navigate to Amazon S3. You will find a recording in the bucket `chime-meeting-sdk-<aws-account-id>-<region>-recordings`, with a key name YYYY/MM/DD/HH/<ISO8601time when meeting started>.mp4.
 
     ![recording artifacts](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/recording-artifacts.png)
 
