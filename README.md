@@ -92,6 +92,7 @@ The above step deploys a AWS CloudFormation stack that creates resources needed 
     cd ../
     git clone https://github.com/aws/amazon-chime-sdk-js
     cd amazon-chime-sdk-js/demos/serverless
+    npm install
     ```
 
 2. Deploy the demo using:
