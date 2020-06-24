@@ -3,4 +3,4 @@
 recording.log
 container.env
 /recording/node_modules/
-
+./build/
