@@ -6,13 +6,13 @@ FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
-  && apt-get upgrade -y \
-	&& apt-get install -y curl \
-	&& curl -sL https://deb.nodesource.com/setup_14.x | bash - \
-	&& apt-get update \
-	&& apt-get install -y nodejs pulseaudio xvfb firefox ffmpeg xdotool unzip \
-  && npm install -g npm \
-  && mkdir -p /usr/src
+    && apt-get upgrade -y \
+    && apt-get install -y curl \
+    && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+    && apt-get update \
+    && apt-get install -y nodejs pulseaudio xvfb firefox ffmpeg xdotool unzip \
+    && npm install -g npm \
+    && mkdir -p /usr/src
 
 COPY ./recording/package.json /usr/src/package.json
 COPY ./recording/package-lock.json /usr/src/package-lock.json
