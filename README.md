@@ -7,6 +7,7 @@ This repository contains resources for building a demo application that records 
 For this walkthrough, you should have the following prerequisites:
 
 * [An AWS account](https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Fportal.aws.amazon.com%2Fbilling%2Fsignup%2Fresume&client_id=signup)
+* Log into your AWS account with an IAM role that has the **AdministratorAccess** policy.
 
 ## Walkthrough
 
@@ -20,7 +21,10 @@ The sections as enumerated below will walk you through the process of creating a
 * Stop the recording and view the recording artifact
 
 ### Create an AWS Cloud9 environment
-1. Log into the AWS console with your AWS credentials and go to the [AWS Cloud9 Console](https://us-east-1.console.aws.amazon.com/cloud9/home?region=us-east-1).
+
+**Note**: Use the same AWS Region to create your Cloud9 environment where you want to deploy the recording application.
+
+1. Log into the AWS console with your AWS credentials and go to the [AWS Cloud9 Console](https://us-east-1.console.aws.amazon.com/cloud9/home?region=us-east-1). **Note**: This link is for `us-east-1` region. 
 2. If you have previously set up a AWS Cloud9 environment in your account you can use it and skip this step entirely.
 3. Press the **Create environment** button or go [here](https://us-east-1.console.aws.amazon.com/cloud9/home/create).
 4. For the Name enter <unique environment name> and press the **Next step** button.
