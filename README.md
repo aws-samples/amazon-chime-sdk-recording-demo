@@ -109,7 +109,12 @@ The above step deploys a AWS CloudFormation stack that creates resources needed 
 
 3. Open the Amazon Chime SDK serverless demo application using the link which was obtained in the previous step in multiple tabs [in any web browser supported by the Amazon Chime SDK](https://docs.aws.amazon.com/chime/latest/dg/meetings-sdk.html#mtg-browsers) to simulate several participant joins. Optionally enable video or content sharing modalities for each participant in addition to audio.
 
-    **NOTE:** This would be the `meetingURL` that would be used later for passing as a parameter to the `StartRecording` API. It would look something like this `https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/v2?m=<meeting-id>`
+    **NOTE:** This would be the `meetingURL` that would be used later for passing as a parameter to the `StartRecording` API. It would look something like this `https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/v2?m=<meeting-id>`. See the screenshot below to see the URL highlighted in the red box.
+    
+    ![Serverless demo](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/serverless-demo-app-meeting-url.png)
+    
+    **Example:** If the meeting URL is `https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/v2?m=MyMeetingTest`, then the encoded URL which needs to be passed to the meeting recorder should look like `https%3A%2F%2Fabcdefghij.execute-api.us-east-1.amazonaws.com%2FProd%2Fv2%3Fm%3DMyMeetingTest`
+    
 
 
 ### Start the meeting recording
