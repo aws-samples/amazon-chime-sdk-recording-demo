@@ -132,7 +132,7 @@ spawnOrFail('sam', ['package', '--s3-bucket', `${bucket}`,
 console.log('Deploying recording application');
 const output=spawnOrFail('sam', ['deploy', '--template-file', './build/packaged.yaml', '--stack-name', `${stack}`,
                     '--parameter-overrides', `ECRDockerImageArn=${ecrDockerImageArn}`,
-                    '--capabilities', 'CAPABILITY_IAM', '--region', `${region}`]);
+                    '--capabilities', 'CAPABILITY_IAM', '--region', `${region}`, '--no-fail-on-empty-changeset']);
 console.log(output);
 
 const invokeUrl=spawnOrFail('aws', ['cloudformation', 'describe-stacks', '--stack-name', `${stack}`,
