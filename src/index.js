@@ -26,6 +26,7 @@ let response = {
 exports.handler = function(event, context, callback) {
     let meetingURL = "";
     let taskId = "";
+    let agendamentoId = "";
     let recordingAction = "";
     
     console.log(event);
@@ -99,6 +100,10 @@ function startRecording(event, context, callback, meetingUrl) {
                         { 
                             name: "MEETING_URL",
                             value: meetingUrl
+                        },
+                        {
+                            name: "AGENDAMENTO_ID",
+                            value: event.queryStringParameters.agendamentoId
                         },
                         {
                             name: "RECORDING_ARTIFACTS_BUCKET",

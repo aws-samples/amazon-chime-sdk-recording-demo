@@ -5,7 +5,8 @@ const { spawn } = require('child_process');
 const { S3Uploader } = require('./utils/upload');
 
 const MEETING_URL = process.env.MEETING_URL || 'Not present in environment';
-console.log(`[recording process] MEETING_URL: ${MEETING_URL}`);
+const AGENDAMENTO_ID = process.env.AGENDAMENTO_ID || 'Not present in environment';
+console.log(`[recording process] MEETING_URL: ${MEETING_URL}`, `[recording process] AGENDAMENTO_ID: ${AGENDAMENTO_ID}`);
 
 const args = process.argv.slice(2);
 const BUCKET_NAME = args[0];
@@ -69,11 +70,7 @@ transcodeStreamToOutput.stderr.on('data', data => {
 
 const timestamp = new Date();
 const fileTimestamp = timestamp.toISOString().substring(0,19);
-const year = timestamp.getFullYear();
-const month = timestamp.getMonth() + 1;
-const day = timestamp.getDate();
-const hour = timestamp.getUTCHours();
-const fileName = `${year}/${month}/${day}/${hour}/${fileTimestamp}.mp4`;
+const fileName = `${AGENDAMENTO_ID}/${fileTimestamp}.mp4`;
 new S3Uploader(BUCKET_NAME, fileName).uploadStream(transcodeStreamToOutput.stdout);
 
 // event handler for docker stop, not exit until upload completes
