@@ -16,7 +16,7 @@ The sections as enumerated below will walk you through the process of creating a
 * Setup AWS Cloud9 environment and clone the demo application
 * Create an Amazon Elastic Container Registry (ECR) and register a Docker container image
 * Deploy the Amazon Chime SDK Recording template
-* Start a Amazon Chime SDK meeting with the serverless demo application and join with multiple participants
+* Start an Amazon Chime SDK meeting with the serverless demo application and join with multiple participants
 * Start the meeting recording
 * Stop the recording and view the recording artifact
 
@@ -81,13 +81,13 @@ The sections as enumerated below will walk you through the process of creating a
     node ./deploy.js -b <my-bucket> -s <my-stack> -i <my-docker-image-uri> -r <region>
     ```
    
-   Here is an example:
+    Here is an example:
     ```
     node ./deploy.js -b recording-demo-cnf-deploy-bucket -s recording-demo-cnf-stack -i 123456789012.dkr.ecr.us-east-1.amazonaws.com/recording-demo:latest -r us-east-1
     ```
-The above step deploys a AWS CloudFormation stack that creates resources needed to run the recording service. It may take several minutes to complete. You will get an Amazon API Gateway invoke URL in the output.
 
-![Deploy output](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/deploy-script-output.png)
+    The above step deploys an AWS CloudFormation stack that creates resources needed to run the recording service. It may take several minutes to complete. You will get an Amazon API Gateway invoke URL in the output.
+    ![Deploy output](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/deploy-script-output.png)
 
 ### Start an Amazon Chime SDK meeting with our serverless demo and join with multiple participants
 
@@ -105,15 +105,15 @@ The above step deploys a AWS CloudFormation stack that creates resources needed 
     ```
    The script will create an Amazon S3 bucket and AWS CloudFormation stack with Amazon Lambda and Amazon API Gateway resources required to run this demo. After the script finishes, it will output a URL that can be opened in a browser.
    
-   You will get a URL similar to `https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/v2` in the output of this step. 
+   You will get a URL similar to `https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/` in the output of this step. 
 
 3. Open the Amazon Chime SDK serverless demo application using the link which was obtained in the previous step in multiple tabs [in any web browser supported by the Amazon Chime SDK](https://docs.aws.amazon.com/chime/latest/dg/meetings-sdk.html#mtg-browsers) to simulate several participant joins. Optionally enable video or content sharing modalities for each participant in addition to audio.
 
-    **NOTE:** This would be the `meetingURL` that would be used later for passing as a parameter to the `StartRecording` API. It would look something like this `https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/v2?m=<meeting-id>`. See the screenshot below to see the URL highlighted in the red box.
+    **NOTE:** This would be the `meetingURL` that would be used later for passing as a parameter to the `StartRecording` API. It would look something like this `https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/?m=<meeting-id>`. See the screenshot below to see the URL highlighted in the red box.
     
     ![Serverless demo](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/serverless-demo-app-meeting-url.png)
     
-    **Example:** If the meeting URL is `https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/v2?m=MyMeetingTest`, then the encoded URL which needs to be passed to the meeting recorder should look like `https%3A%2F%2Fabcdefghij.execute-api.us-east-1.amazonaws.com%2FProd%2Fv2%3Fm%3DMyMeetingTest`
+    **Example:** If the meeting URL is `https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/?m=MyMeetingTest`, then the encoded URL which needs to be passed to the meeting recorder should look like `https%3A%2F%2Fabcdefghij.execute-api.us-east-1.amazonaws.com%2FProd%2F%3Fm%3DMyMeetingTest`
     
 
 
@@ -127,7 +127,7 @@ There are multiple ways for [invoking a REST API in Amazon API Gateway](https://
 
     ![postman auth](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-auth-tab.png)
 
-2. Start recording by passing the `recordingAction` as "start" and a **url encoded** `meetingURL` for our demo application as query parameters in the POST request to API Gateway.
+2. Start recording by passing `start` to `recordingAction` and a **url encoded** to `meetingURL` for our demo application as query parameters in the POST request to API Gateway.
 
     ![start recording](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-start-recording.png)
 
@@ -137,7 +137,7 @@ There are multiple ways for [invoking a REST API in Amazon API Gateway](https://
 
 ### Stop the recording and view the recording artifact
 
-1. To stop the recording, we need to pass the task ARN as `taskId` that was received in the API response to start the recording in addition to the `recordingAction` denoting "stop".
+1. To stop the recording, we need to pass the ECS task ARN(received in the API response which started the recording) to `taskId`, and `stop` to `recordingAction`.
 
     ![stop recording](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/resources/postman-app-stop-recording.png)
 
@@ -148,6 +148,18 @@ There are multiple ways for [invoking a REST API in Amazon API Gateway](https://
 
 ### Cleaning up
 To avoid incurring future charges, please delete any resources in your account that you are not using such as files in Amazon S3, Amazon ECS and Amazon Lambda instances, AWS Cloud9 environment and Amazon API Gateway entries.
+
+## FAQ
+1. If you encounter `IOError: [Errno 28] No space left on device.` during deployment, you can remove unused docker images/process by:
+    ```
+    docker system prune
+
+    or manually remove docker containers
+    docker rm ID_or_Name 
+
+    and/or manually remove docker images
+    docker rmi $(docker images -a -q)
+    ```
 
 ## License
 

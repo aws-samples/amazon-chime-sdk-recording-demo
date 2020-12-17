@@ -37,6 +37,7 @@ popd >& /dev/null
 
 # Set the Firefox preferences to enable automatic media playing with no user
 # interaction and the use of the OpenH264 plugin.
+# media.setsinkid.enabled is recommended for firefox: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/setSinkId
 cat <<EOF >> /tmp/foo4/prefs.js
 user_pref("media.autoplay.default", 0);
 user_pref("media.autoplay.enabled.user-gestures-needed", false);
@@ -45,6 +46,7 @@ user_pref("media.gmp-gmpopenh264.abi", "x86_64-gcc3");
 user_pref("media.gmp-gmpopenh264.lastUpdate", 1571534329);
 user_pref("media.gmp-gmpopenh264.version", "1.8.1.1");
 user_pref("doh-rollout.doorhanger-shown", true);
+user_pref("media.setsinkid.enabled", true);
 EOF
 
 # Start Firefox browser and point it at the URL we want to capture
