@@ -50,14 +50,14 @@ const transcodeStreamToOutput = spawn('ffmpeg',[
         '-maxrate', `${VIDEO_BITRATE}`,
         '-g', `${VIDEO_GOP}`,
     // apply a fixed delay to the audio stream in order to synchronize it with the video stream
-    '-filter_complex', 'adelay=delays=1000|1000',
+    -filter_complex', 'adelay=delays=500|500, aresample=async=1:first_pts=0',
     // codec audio with aac
     '-c:a', 'aac',
         '-b:a', `${AUDIO_BITRATE}`,
         '-ac', `${AUDIO_CHANNELS}`,
         '-ar', `${AUDIO_SAMPLERATE}`,
     // adjust fragmentation to prevent seeking(resolve issue: muxer does not support non seekable output)
-    '-movflags', 'frag_keyframe+empty_moov',
+    '-frag_duration', '500',
     // set output format to mp4 and output file to stdout
     '-f', 'mp4', '-'
     ]
