@@ -161,6 +161,12 @@ To avoid incurring future charges, please delete any resources in your account t
     docker rmi $(docker images -a -q)
     ```
 
+2. How to reduce the start time of the bot joining the meeting?
+
+    Here are some improvements that you can make to reduce the start latency.
+    1. There is a `ECS_IMAGE_PULL_BEHAVIOR` in [ecs-agent-config](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-config.html) which you can use to cache the docker image. This reduces the time to pull the image from ECR and use it to spin up the ECS Task. But for using this, you might have to get rid of this [placement constraint](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/src/index.js#L113) to use distinct instances for placing your tasks. If you use a larger instance to run multiple recording tasks in the same instance, we have noticed the task startup time as quick as 2-3 seconds. Then some additional time is taken for the [Firefox](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/recording/run.sh#L58) to start up and initialize [`ffmpeg`](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/recording/record.js#L25). 
+
+    2. This would be a big change but one other improvement that you can do is to use [ECS Service](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_services.html) to have a bunch of tasks running and listening to a queue/source for incoming requests. So here, instead of calling [startRecording -> ECS RunTask API](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/src/index.js#L118) or [stopRecording -> ECS StopTask API](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/blob/master/src/index.js#L140), you would already have a service with `n` number of tasks running (which would already have `Firefox` and `ffmpeg` and other dependencies installed and running) and it can start recording as soon as a request comes in (in the source).
 ## License
 
 This project is licensed under the Apache-2.0 License.
