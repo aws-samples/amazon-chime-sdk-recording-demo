@@ -10,6 +10,7 @@ RUN /usr/bin/apt-get update && \
 	curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
 	/usr/bin/apt-get update && \
 	/usr/bin/apt-get upgrade -y && \
+	/usr/bin/apt-get install dbus-x11 -y && \
 	/usr/bin/apt-get install -y nodejs pulseaudio xvfb firefox ffmpeg xdotool unzip
 
 COPY /recording /recording
