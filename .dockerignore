@@ -1,0 +1,9 @@
+./build
+./resources
+./src
+./templates
+*.md
+deploy.js
+LICENSE
+Makefile
+.gitignore

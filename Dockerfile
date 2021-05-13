@@ -5,17 +5,27 @@ FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN /usr/bin/apt-get update && \
-	/usr/bin/apt-get install -y curl && \
-	curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
-	/usr/bin/apt-get update && \
-	/usr/bin/apt-get upgrade -y && \
-	/usr/bin/apt-get install -y nodejs pulseaudio xvfb firefox ffmpeg xdotool unzip
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y curl \
+    && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+    && apt-get update \
+    && apt-get install -y nodejs pulseaudio xvfb firefox ffmpeg xdotool unzip \
+    && npm install -g npm \
+    && mkdir -p /usr/src
 
-COPY /recording /recording
-WORKDIR /recording
-RUN /usr/bin/npm install && \
-	chmod +x /recording/run.sh && \
-	chmod +x /recording/record.js
+COPY ./recording/package.json /usr/src/package.json
+COPY ./recording/package-lock.json /usr/src/package-lock.json
 
-ENTRYPOINT ["/recording/run.sh"]
+WORKDIR /usr/src
+
+RUN npm install
+
+COPY ./recording /usr/src/
+
+RUN chmod +x ./run.sh \
+	  && chmod +x ./record.js
+
+ENTRYPOINT ["/bin/bash"]
+
+CMD [ "./run.sh" ]
