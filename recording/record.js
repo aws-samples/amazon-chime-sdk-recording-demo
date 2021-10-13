@@ -57,7 +57,7 @@ const transcodeStreamToOutput = spawn('ffmpeg',[
         '-ac', `${AUDIO_CHANNELS}`,
         '-ar', `${AUDIO_SAMPLERATE}`,
     // adjust fragmentation to prevent seeking(resolve issue: muxer does not support non seekable output)
-    '-frag_duration', '500000',
+    '-movflags', `frag_keyframe+empty_moov+default_base_moof`,
     // set output format to mp4 and output file to stdout
     '-f', 'mp4', '-'
     ]
