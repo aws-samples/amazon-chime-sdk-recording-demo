@@ -58,6 +58,8 @@ const transcodeStreamToOutput = spawn('ffmpeg',[
         '-ar', `${AUDIO_SAMPLERATE}`,
     // adjust fragmentation to prevent seeking(resolve issue: muxer does not support non seekable output)
     '-movflags', `frag_keyframe+empty_moov+default_base_moof`,
+    // fraq_duration needed to have it work with Safari, small value provides best quality
+    '-frag_duration', '1000' ,
     // set output format to mp4 and output file to stdout
     '-f', 'mp4', '-'
     ]
