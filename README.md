@@ -172,6 +172,10 @@ To avoid incurring future charges, please delete any resources in your account t
 
     On Jul 7, 2021, Amazon Chime launched a new feature to captures meeting audio, video, and content share streams in 5 second segments and directly delivers them, along with meeting events and data messages, to developer’s designated S3 bucket. You can read more about this [here](https://aws.amazon.com/about-aws/whats-new/2021/07/the-amazon-chime-sdk-adds-media-capture-pipelines-to-enable-capture-of-meeting-video-audio-and-content-streams/). There is also a new demo (Ref: [amazon-chime-media-capture-pipeline-demo](https://github.com/aws-samples/amazon-chime-media-capture-pipeline-demo)) which demonstrates how to build and configure several services within AWS so that you can capture the media of a meeting to an S3 bucket and then process that output into a complete video file
 
+4. How to adjust audio delay?
+
+    Lip-sync can be affected by the underlying instance type. You can adjust the audio delay relative to the video by modifying the following line in amazon-chime-sdk-recording-demo/recording/record.js: '-filter_complex', 'adelay=delays=350|350, aresample=async=1:first_pts=0',. Change the adelay=delay=350|350 to lower numbers (both the same) to decrease the audio delay and increase it to increase the audio delay.
+
 ## License
 
 This project is licensed under the Apache-2.0 License.
