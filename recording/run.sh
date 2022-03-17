@@ -5,7 +5,7 @@
 
 set -xeo pipefail
 
-BROWSER_URL="${MEETING_URL}&record=true"
+BROWSER_URL="${MEETING_URL}"
 SCREEN_WIDTH=${RECORDING_SCREEN_WIDTH:-'1280'}
 SCREEN_HEIGHT=${RECORDING_SCREEN_HEIGHT:-'720'}
 SCREEN_RESOLUTION=${SCREEN_WIDTH}x${SCREEN_HEIGHT}
@@ -31,7 +31,7 @@ firefox --no-remote --new-instance --createprofile "foo4 /tmp/foo4"
 mkdir -p /tmp/foo4/gmp-gmpopenh264/1.8.1.1/
 pushd /tmp/foo4/gmp-gmpopenh264/1.8.1.1 >& /dev/null
 curl -s -O http://ciscobinary.openh264.org/openh264-linux64-2e1774ab6dc6c43debb0b5b628bdf122a391d521.zip
-unzip openh264-linux64-2e1774ab6dc6c43debb0b5b628bdf122a391d521.zip
+unzip -n openh264-linux64-2e1774ab6dc6c43debb0b5b628bdf122a391d521.zip
 rm -f openh264-linux64-2e1774ab6dc6c43debb0b5b628bdf122a391d521.zip
 popd >& /dev/null
 
