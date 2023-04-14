@@ -70,7 +70,7 @@ transcodeStreamToOutput.stderr.on('data', data => {
 });
 
 const timestamp = new Date();
-const fileTimestamp = timestamp.toISOString().substring(0,19);
+const fileTimestamp = timestamp.toISOString().substring(0, 19);
 const year = timestamp.getFullYear();
 const month = timestamp.getMonth() + 1;
 const day = timestamp.getDate();
