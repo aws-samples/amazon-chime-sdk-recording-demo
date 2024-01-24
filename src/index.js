@@ -3,9 +3,8 @@
 
 'use strict';
 
-var AWS = require('aws-sdk');
-var ecs = new AWS.ECS();
-
+import { ECSClient, StopTaskCommand, RunTaskCommand } from '@aws-sdk/client-ecs';
+const client = new ECSClient({});
 // Reading environment variables
 const ecsClusterArn = process.env.ecsClusterArn;
 const ecsTaskDefinationArn = process.env.ecsTaskDefinationArn;
@@ -23,7 +22,7 @@ let response = {
     body: ''
 };
  
-exports.handler = function(event, context, callback) {
+exports.handler = async function(event, context, callback) {
     let meetingURL = "";
     let taskId = "";
     let recordingAction = "";
@@ -41,7 +40,7 @@ exports.handler = function(event, context, callback) {
             if(event.queryStringParameters && event.queryStringParameters.meetingURL) {
                 console.log("Meeting URL: " + event.queryStringParameters.meetingURL);
                 meetingURL = decodeURIComponent(event.queryStringParameters.meetingURL);
-                return startRecording(event, context, callback, meetingURL);
+                return await startRecording(event, context, callback, meetingURL);
             } else {
                 responseBody = {
                     message: "Missing parameter: meetingURL",
@@ -58,7 +57,7 @@ exports.handler = function(event, context, callback) {
             if(event.queryStringParameters && event.queryStringParameters.taskId) {
                 console.log("ECS task ID: " + event.queryStringParameters.taskId);
                 taskId = event.queryStringParameters.taskId;
-                return stopRecording(event, context, taskId);
+                return await stopRecording(event, context, taskId);
             } else {
                 responseBody = {
                     message: "Missing parameter: taskId",
@@ -87,7 +86,7 @@ exports.handler = function(event, context, callback) {
     callback(null, response);
 };
 
-function startRecording(event, context, callback, meetingUrl) {
+startRecording = async (event, context, callback, meetingUrl) => {
     let ecsRunTaskParams = {
         cluster: ecsClusterArn,
         launchType: "EC2",
@@ -114,43 +113,43 @@ function startRecording(event, context, callback, meetingUrl) {
         }],
         taskDefinition: ecsTaskDefinationArn
     };
-    
-    ecs.runTask(ecsRunTaskParams, function(err, data) {
-        if (err) {
-            console.log(err);   // an error occurred
-            response.statusCode = err.statusCode;
-            response.body = JSON.stringify(err, null, ' ');
-            context.succeed(response);
-        }
-        else {
-            console.log(data);  // successful response
-            response.statusCode = 200;
-            response.body = JSON.stringify((data.tasks.length && data.tasks[0].taskArn) ? data.tasks[0].taskArn : data, null, ' ');
-            context.succeed(response);
-        }
-    });
+
+    try {
+        const response = await client.send(new RunTaskCommand(ecsRunTaskParams));
+        console.log(response.data); // successful response
+        response.statusCode = 200;
+        response.body = JSON.stringify(
+          response.data.tasks.length && response.data.tasks[0].taskArn ? response.data.tasks[0].taskArn : response.data,
+          null,
+          ' '
+        );
+        context.succeed(response);      
+    } catch (err) {
+        console.log(err); // an error occurred
+        response.statusCode = err.statusCode;
+        response.body = JSON.stringify(err, null, ' ');
+        context.succeed(response);
+    }
 }
 
-function stopRecording(event, context, taskId) {
+stopRecording = async (event, context, taskId) => {
     let ecsStopTaskParam = {
         cluster: ecsClusterArn,
         task: taskId
     };
-    
-    ecs.stopTask(ecsStopTaskParam, function(err, data) {
-        if (err) {
-            console.log(err);   // an error occurred
-            response.statusCode = err.statusCode;
-            response.body = JSON.stringify(err, null, ' ');
-            context.succeed(response);
-        }
-        else {
-            console.log(data);  // successful response
-            response.statusCode = 200;
-            responseBody = data;
-            response.body = JSON.stringify(data, null, ' ');
-            console.log("Stop task succeeded.", response);
-            context.succeed(response);
-        }
-    });
+
+    try {
+        const response = await client.send(new StopTaskCommand(ecsStopTaskParam));
+        console.log(response.data); // successful response
+        response.statusCode = 200;
+        responseBody = response.data;
+        response.body = JSON.stringify(response.data, null, ' ');
+        console.log('Stop task succeeded.', response);
+        context.succeed(response);
+    } catch (err) {
+        console.log(err); // an error occurred
+        response.statusCode = err.statusCode;
+        response.body = JSON.stringify(err, null, ' ');
+        context.succeed(response);
+    }
 }
